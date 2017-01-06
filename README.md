@@ -1,3 +1,13 @@
+# Disclamer
+I created this tool to decrypt my own chat logs beause I’m too lazy
+to copy and paste them one by one from Kakaotalk. If you want to
+decrypt messages that were not intended to you, think about how
+you’d feel if someone would do that to you. You don’t want anybody
+to read your private conversations with your boyfriend, girlfriend,
+close friends, family… so **don’t do it**.
+
+It is your responsability to respect people’s privacy.
+
 # kakaodecrypt.py
 Decrypt chat history from the local database of Kakaotalk’s Android app.
 
