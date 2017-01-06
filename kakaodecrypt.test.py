@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+
+import unittest
+from kakaodecrypt import KakaoDecrypt
+
+class KakaoDecryptTest(unittest.TestCase):
+  def testGenSalt(self):
+    zero = b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0'
+    self.assertEqual(KakaoDecrypt.genSalt(-1, 5), zero)
+    self.assertEqual(KakaoDecrypt.genSalt(0, 5), zero)
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 0), b"1234\0\0\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 1), b"1234\0\0\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 2), b"121234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 3), b"241234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 4), b"181234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 5), b"301234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 6), b"361234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 7), b"121234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 8), b"481234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 9), b"71234\0\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 10), b"351234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 11), b"401234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 12), b"171234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 13), b"231234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 14), b"291234\0\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 15), b"isabel1234\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 16), b"kale1234\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 17), b"sulli1234\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 18), b"van1234\0\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 19), b"merry1234\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 20), b"kyle1234\0\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(1234, 21), b"james1234\0\0\0\0\0\0\0")
+    self.assertEqual(KakaoDecrypt.genSalt(216658451, 17), b"sulli216658451\0\0")
+    self.assertRaises(ValueError, KakaoDecrypt.genSalt, 1234, 42)
+
+  def testDecryptMessage(self):
+    self.assertEqual(KakaoDecrypt.decrypt(216658451, 17, 'UHVw8VBhUhdbIFTlvdBXdA=='), 'Hey friends!')
+
+if __name__ == '__main__':
+  unittest.main()
