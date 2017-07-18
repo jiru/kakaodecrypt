@@ -35,6 +35,8 @@ class KakaoDecryptTest(unittest.TestCase):
 
   def testDecryptMessage(self):
     self.assertEqual(KakaoDecrypt.decrypt(216658451, 17, 'UHVw8VBhUhdbIFTlvdBXdA=='), 'Hey friends!')
+    self.assertEqual(KakaoDecrypt.decrypt(240440409, 22, 'pBO6rG5DQmOOfRwyoV6nqw=='), 'ㄱㅇㄷ')
+
 
 if __name__ == '__main__':
   unittest.main()

@@ -11,7 +11,7 @@ class KakaoDecrypt:
       return b'\0'*16
 
     prefixes = ['','','12','24','18','30','36','12','48','7','35','40','17','23','29',
-                'isabel','kale','sulli','van','merry','kyle','james']
+                'isabel','kale','sulli','van','merry','kyle','james', 'maddux']
     try:
       salt = prefixes[encType] + str(user_id)
     except IndexError:
