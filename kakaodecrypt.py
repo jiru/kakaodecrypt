@@ -105,30 +105,49 @@ class KakaoDbDecrypt:
     cur.execute(new_tbl_stmt)
 
   @staticmethod
-  def run(db_file, enc_table, dec_table, do_print):
+  def run(db_file, enc_table, dec_table, enc_fields, do_print):
     import sqlite3
     import json
 
     con = sqlite3.connect(db_file)
     cur = con.cursor()
 
+    cur.execute('PRAGMA table_info(%s)' % enc_table)
+    rows = cur.fetchall()
+    if len(rows) == 0:
+      return
+    col_defs = { row[1]: row[0] for row in rows }
+
     if not do_print:
       KakaoDbDecrypt.copy_table_struct(cur, enc_table, dec_table)
 
-    cur.execute('PRAGMA table_info(%s)' % enc_table)
-    rows = cur.fetchall()
-    col_defs = { row[1]: row[0] for row in rows }
+    if enc_table != 'chat_logs':
+      cur.execute('SELECT user_id FROM open_profile LIMIT 1')
+      profile_id = cur.fetchone()[0]
+    else:
+      profile_id = None
 
+    if do_print:
+      print("-- Table '%s'" % enc_table)
     cur.execute('SELECT * FROM %s' % enc_table)
     rows = cur.fetchall()
+
     for row in rows:
-      v = row[ col_defs['v'] ]
-      v_data = json.loads(v)
-      enc_type = v_data['enc']
-      user_id = row[ col_defs['user_id'] ]
+      try:
+        enc_type = row[ col_defs['enc'] ]
+      except KeyError:
+        v = row[ col_defs['v'] ]
+        v_data = json.loads(v)
+        enc_type = v_data['enc']
+
+      if profile_id is None:
+        user_id = row[ col_defs['user_id'] ]
+      else:
+        user_id = profile_id
+
       decrypted_row = list(row)
 
-      for enc_col in ['message', 'attachment']:
+      for enc_col in enc_fields:
         contents = row[ col_defs[enc_col] ]
         try:
           if contents is not None:
@@ -145,12 +164,21 @@ class KakaoDbDecrypt:
 
     if not do_print:
       con.commit()
+      print("Created table '%s'." % dec_table)
 
 if __name__ == '__main__':
   import sys
-  enc_table = 'chat_logs'
-  dec_table = 'chat_logs_dec'
   do_print = False
+  dec_suffix = '_dec'
+  enc_schema = {
+    'chat_logs': ['message', 'attachment'],
+    'friends':   ['uuid', 'phone_number', 'raw_phone_number', 'name',
+                  'profile_image_url', 'full_profile_image_url',
+                  'original_profile_image_url', 'status_message', 'v',
+                  'board_v', 'ext', 'nick_name', 'contact_name'],
+    'friends_board_contents' : [ 'image_url', 'thumbnail_url', 'url', 'v' ],
+  }
+
   try:
     if sys.argv[1] == '-p':
       do_print = True
@@ -158,9 +186,12 @@ if __name__ == '__main__':
     else:
       db_file = sys.argv[1]
   except IndexError:
-    print('Usage: %s [-p] KakaoTalk.db' % sys.argv[0])
-    print("Decrypt contents of table '%s' into a new table '%s'" % (enc_table, dec_table))
+    print('Usage: %s [-p] KakaoTalk[2].db' % sys.argv[0])
+    print("Decrypt contents of tables into new tables suffixed with %s." % dec_suffix)
     print('-p  Print decrypted table contents to stdout instead')
     sys.exit()
 
-  KakaoDbDecrypt.run(db_file, enc_table, dec_table, do_print)
+  for enc_table, enc_fields in enc_schema.items():
+    dec_table = enc_table + dec_suffix
+    KakaoDbDecrypt.run(db_file, enc_table, dec_table, enc_fields, do_print)
+
