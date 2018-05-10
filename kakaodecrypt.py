@@ -80,7 +80,7 @@ class KakaoDecrypt:
     return bytes(dKey)
 
   @staticmethod
-  def decrypt(user_id, encType, ciphertext):
+  def decrypt(user_id, encType, b64_ciphertext):
     key = b'\x16\x08\x09\x6f\x02\x17\x2b\x08\x21\x21\x0a\x10\x03\x03\x07\x06'
     iv = b'\x0f\x08\x01\x00\x19\x47\x25\xdc\x15\xf5\x17\xe0\xe1\x15\x0c\x35'
 
@@ -88,7 +88,10 @@ class KakaoDecrypt:
     key = KakaoDecrypt.deriveKey(key, salt, 2, 32)
     encoder = AES.new(key, AES.MODE_CBC, iv)
 
-    padded = encoder.decrypt(base64.b64decode(ciphertext))
+    ciphertext = base64.b64decode(b64_ciphertext)
+    if len(ciphertext) == 0:
+      return b64_ciphertext
+    padded = encoder.decrypt(ciphertext)
     try:
       plaintext = padded[:-padded[-1]]
     except IndexError:
@@ -149,11 +152,8 @@ class KakaoDbDecrypt:
 
       for enc_col in enc_fields:
         contents = row[ col_defs[enc_col] ]
-        try:
-          if contents is not None:
-            contents = KakaoDecrypt.decrypt(user_id, enc_type, contents)
-        except ValueError:
-          pass
+        if contents is not None:
+          contents = KakaoDecrypt.decrypt(user_id, enc_type, contents)
         decrypted_row[ col_defs[enc_col] ] = contents
 
       if do_print:
