@@ -5,6 +5,8 @@ import hashlib
 import base64
 
 class KakaoDecrypt:
+  key_cache = {}
+
   @staticmethod
   def genSalt(user_id, encType):
     if user_id <= 0:
@@ -85,7 +87,11 @@ class KakaoDecrypt:
     iv = b'\x0f\x08\x01\x00\x19\x47\x25\xdc\x15\xf5\x17\xe0\xe1\x15\x0c\x35'
 
     salt = KakaoDecrypt.genSalt(user_id, encType)
-    key = KakaoDecrypt.deriveKey(key, salt, 2, 32)
+    if salt in KakaoDecrypt.key_cache:
+      key = KakaoDecrypt.key_cache[salt]
+    else:
+      key = KakaoDecrypt.deriveKey(key, salt, 2, 32)
+      KakaoDecrypt.key_cache[salt] = key
     encoder = AES.new(key, AES.MODE_CBC, iv)
 
     ciphertext = base64.b64decode(b64_ciphertext)
