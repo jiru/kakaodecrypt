@@ -96,7 +96,10 @@ class KakaoDecrypt:
       plaintext = padded[:-padded[-1]]
     except IndexError:
       raise ValueError('Unable to decrypt data', ciphertext)
-    return plaintext.decode('UTF-8')
+    try:
+      return plaintext.decode('UTF-8')
+    except UnicodeDecodeError:
+      return plaintext
 
 class KakaoDbDecrypt:
   @staticmethod
