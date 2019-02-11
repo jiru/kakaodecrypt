@@ -39,6 +39,7 @@ class KakaoDecryptTest(unittest.TestCase):
     self.assertEqual(KakaoDecrypt.decrypt(195847548, 24, 'IICZJO/83CXZWZhNmiWmHg=='), "It's ok")
     self.assertEqual(KakaoDecrypt.decrypt(1234, 1, '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'), '\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
     self.assertEqual(KakaoDecrypt.decrypt(712919372478, 22, 'Ah06VZFMkDYZTdUrbrBb77fLJjvbAuv1xjrAkaLOdkQ='), b'r\x1db\x93\x9c\xd7\xe5\xe4.A')
+    self.assertEqual(KakaoDecrypt.decrypt(283456151, 26, 'gYKexDBLvO7OwDqjD58LlQ=='), 'i have lasers')
 
 
 if __name__ == '__main__':
