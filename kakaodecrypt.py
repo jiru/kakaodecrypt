@@ -17,6 +17,7 @@ class KakaoDecrypt:
                 'tony', 'hayden', 'paul', 'elijah', 'dorothy']
     try:
       salt = prefixes[encType] + str(user_id)
+      salt = salt[0:16]
     except IndexError:
       raise ValueError('Unsupported encoding type %i' % encType)
     salt = salt + '\0' * (16 - len(salt))
