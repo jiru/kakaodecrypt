@@ -1,5 +1,5 @@
 # Disclamer
-I created this tool to decrypt my own chat logs beause I’m too lazy
+I created this tool to decrypt my own chat logs because I’m too lazy
 to copy and paste them one by one from Kakaotalk. If you want to
 decrypt messages that were not intended to you, think about how
 you’d feel if someone would do that to you. You don’t want anybody
