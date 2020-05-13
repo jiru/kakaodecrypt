@@ -3,6 +3,7 @@
 from Crypto.Cipher import AES
 import hashlib
 import base64
+import argparse
 
 class KakaoDecrypt:
   key_cache = {}
@@ -190,19 +191,13 @@ if __name__ == '__main__':
     'friends_board_contents' : [ 'image_url', 'thumbnail_url', 'url', 'v' ],
   }
 
-  try:
-    if sys.argv[1] == '-p':
-      do_print = True
-      db_file = sys.argv[2]
-    else:
-      db_file = sys.argv[1]
-  except IndexError:
-    print('Usage: %s [-p] KakaoTalk[2].db' % sys.argv[0])
-    print("Decrypt contents of tables into new tables suffixed with %s." % dec_suffix)
-    print('-p  Print decrypted table contents to stdout instead')
-    sys.exit()
+  parser = argparse.ArgumentParser(description='Decrypt contents of tables into new tables suffixed with %s.' % dec_suffix)
+  parser.add_argument('db_file', help='KakaoTalk.db or KakaoTalk2.db file')
+  parser.add_argument('-p', help='Print decrypted table contents to stdout instead',
+                            action='store_true')
+  args = parser.parse_args()
 
   for enc_table, enc_fields in enc_schema.items():
     dec_table = enc_table + dec_suffix
-    KakaoDbDecrypt.run(db_file, enc_table, dec_table, enc_fields, do_print)
+    KakaoDbDecrypt.run(args.db_file, enc_table, dec_table, enc_fields, args.p)
 
