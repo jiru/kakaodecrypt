@@ -138,13 +138,14 @@ class KakaoDbDecrypt:
 
     if enc_table != 'chat_logs':
       if user_id is None:
-        cur.execute('SELECT user_id FROM open_profile LIMIT 1')
         try:
+          cur.execute('SELECT user_id FROM open_profile LIMIT 1')
           profile_id = cur.fetchone()[0]
-        except TypeError:
-          print("Couldn't find user_id of this account.")
-          print("Try using guess_user_id.py and then specify user_id with -u")
-          sys.exit()
+        except (sqlite3.OperationalError, TypeError):
+          if do_print:
+            print('-- ', end='')
+          print("Skipping table '%s' (to decrypt it, please specify user_id with -u)." % enc_table)
+          return
       else:
         profile_id = user_id
     else:
@@ -197,6 +198,9 @@ if __name__ == '__main__':
                   'original_profile_image_url', 'status_message', 'v',
                   'board_v', 'ext', 'nick_name', 'contact_name'],
     'friends_board_contents' : [ 'image_url', 'thumbnail_url', 'url', 'v' ],
+    'chat_rooms': ['last_message'],
+    'item': ['v'],
+    'item_resource': ['v'],
   }
 
   parser = argparse.ArgumentParser(description='Decrypt contents of tables into new tables suffixed with %s.' % dec_suffix)
