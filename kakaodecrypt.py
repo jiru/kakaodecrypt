@@ -120,7 +120,7 @@ class KakaoDbDecrypt:
     cur.execute(new_tbl_stmt)
 
   @staticmethod
-  def run(db_file, enc_table, dec_table, enc_fields, do_print):
+  def run(db_file, enc_table, dec_table, enc_fields, do_print, user_id):
     import sqlite3
     import json
 
@@ -137,8 +137,16 @@ class KakaoDbDecrypt:
       KakaoDbDecrypt.copy_table_struct(cur, enc_table, dec_table)
 
     if enc_table != 'chat_logs':
-      cur.execute('SELECT user_id FROM open_profile LIMIT 1')
-      profile_id = cur.fetchone()[0]
+      if user_id is None:
+        cur.execute('SELECT user_id FROM open_profile LIMIT 1')
+        try:
+          profile_id = cur.fetchone()[0]
+        except TypeError:
+          print("Couldn't find user_id of this account.")
+          print("Try using guess_user_id.py and then specify user_id with -u")
+          sys.exit()
+      else:
+        profile_id = user_id
     else:
       profile_id = None
 
@@ -192,6 +200,7 @@ if __name__ == '__main__':
   }
 
   parser = argparse.ArgumentParser(description='Decrypt contents of tables into new tables suffixed with %s.' % dec_suffix)
+  parser.add_argument('-u', help='specify user_id to decrypt', type=int, metavar='user_id')
   parser.add_argument('db_file', help='KakaoTalk.db or KakaoTalk2.db file')
   parser.add_argument('-p', help='Print decrypted table contents to stdout instead',
                             action='store_true')
@@ -199,5 +208,5 @@ if __name__ == '__main__':
 
   for enc_table, enc_fields in enc_schema.items():
     dec_table = enc_table + dec_suffix
-    KakaoDbDecrypt.run(args.db_file, enc_table, dec_table, enc_fields, args.p)
+    KakaoDbDecrypt.run(args.db_file, enc_table, dec_table, enc_fields, args.p, args.u)
 
