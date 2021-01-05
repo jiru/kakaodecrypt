@@ -8,6 +8,25 @@ import argparse
 class KakaoDecrypt:
   key_cache = {}
 
+  # Reimplementation of com.kakao.talk.dream.Projector.incept() from libdream.so
+  @staticmethod
+  def incept(n):
+    dict1 = ['adrp.ldrsh.ldnp', 'ldpsw', 'umax', 'stnp.rsubhn', 'sqdmlsl', 'uqrshl.csel', 'sqshlu', 'umin.usubl.umlsl', 'cbnz.adds', 'tbnz',
+             'usubl2', 'stxr', 'sbfx', 'strh', 'stxrb.adcs', 'stxrh', 'ands.urhadd', 'subs', 'sbcs', 'fnmadd.ldxrb.saddl',
+             'stur', 'ldrsb', 'strb', 'prfm', 'ubfiz', 'ldrsw.madd.msub.sturb.ldursb', 'ldrb', 'b.eq', 'ldur.sbfiz', 'extr',
+             'fmadd', 'uqadd', 'sshr.uzp1.sttrb', 'umlsl2', 'rsubhn2.ldrh.uqsub', 'uqshl', 'uabd', 'ursra', 'usubw', 'uaddl2',
+             'b.gt', 'b.lt', 'sqshl', 'bics', 'smin.ubfx', 'smlsl2', 'uabdl2', 'zip2.ssubw2', 'ccmp', 'sqdmlal',
+             'b.al', 'smax.ldurh.uhsub', 'fcvtxn2', 'b.pl']
+    dict2 = ['saddl', 'urhadd', 'ubfiz.sqdmlsl.tbnz.stnp', 'smin', 'strh', 'ccmp', 'usubl', 'umlsl', 'uzp1', 'sbfx',
+             'b.eq', 'zip2.prfm.strb', 'msub', 'b.pl', 'csel', 'stxrh.ldxrb', 'uqrshl.ldrh', 'cbnz', 'ursra', 'sshr.ubfx.ldur.ldnp',
+             'fcvtxn2', 'usubl2', 'uaddl2', 'b.al', 'ssubw2', 'umax', 'b.lt', 'adrp.sturb', 'extr', 'uqshl',
+             'smax', 'uqsub.sqshlu', 'ands', 'madd', 'umin', 'b.gt', 'uabdl2', 'ldrsb.ldpsw.rsubhn', 'uqadd', 'sttrb',
+             'stxr', 'adds', 'rsubhn2.umlsl2', 'sbcs.fmadd', 'usubw', 'sqshl', 'stur.ldrsh.smlsl2', 'ldrsw', 'fnmadd', 'stxrb.sbfiz',
+             'adcs', 'bics.ldrb', 'l1ursb', 'subs.uhsub', 'ldurh', 'uabd', 'sqdmlal']
+    word1 = dict1[  n     % len(dict1) ]
+    word2 = dict2[ (n+31) % len(dict2) ]
+    return word1 + '.' + word2
+
   @staticmethod
   def genSalt(user_id, encType):
     if user_id <= 0:
@@ -15,7 +34,8 @@ class KakaoDecrypt:
 
     prefixes = ['','','12','24','18','30','36','12','48','7','35','40','17','23','29',
                 'isabel','kale','sulli','van','merry','kyle','james', 'maddux',
-                'tony', 'hayden', 'paul', 'elijah', 'dorothy', 'sally', 'bran']
+                'tony', 'hayden', 'paul', 'elijah', 'dorothy', 'sally', 'bran',
+                KakaoDecrypt.incept(830819)]
     try:
       salt = prefixes[encType] + str(user_id)
       salt = salt[0:16]
