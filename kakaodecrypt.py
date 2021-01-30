@@ -181,7 +181,11 @@ class KakaoDbDecrypt:
         enc_type = row[ col_defs['enc'] ]
       except KeyError:
         v = row[ col_defs['v'] ]
-        v_data = json.loads(v)
+        try:
+          v_data = json.loads(v)
+        except TypeError:
+          print("Warning: skipping row #%d of table %s (invalid json)." % (row[ col_defs['_id'] ], enc_table))
+          continue
         enc_type = v_data['enc']
 
       if profile_id is None:
