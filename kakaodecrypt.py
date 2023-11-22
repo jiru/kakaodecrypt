@@ -35,7 +35,7 @@ class KakaoDecrypt:
     prefixes = ['','','12','24','18','30','36','12','48','7','35','40','17','23','29',
                 'isabel','kale','sulli','van','merry','kyle','james', 'maddux',
                 'tony', 'hayden', 'paul', 'elijah', 'dorothy', 'sally', 'bran',
-                KakaoDecrypt.incept(830819)]
+                KakaoDecrypt.incept(830819), 'veil']
     try:
       salt = prefixes[encType] + str(user_id)
       salt = salt[0:16]
